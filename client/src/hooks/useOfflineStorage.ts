@@ -60,6 +60,7 @@ export function useOfflineStorage() {
     if (!isOnline) return;
 
     const unsyncedAnalyses = offlineAnalyses.filter(analysis => !analysis.synced);
+    let syncedCount = 0;
     
     for (const analysis of unsyncedAnalyses) {
       try {
@@ -87,11 +88,14 @@ export function useOfflineStorage() {
           );
           setOfflineAnalyses(updated);
           localStorage.setItem('aloe-offline-analyses', JSON.stringify(updated));
+          syncedCount++;
         }
       } catch (error) {
         console.error('Failed to sync analysis:', analysis.id, error);
       }
     }
+
+    return syncedCount;
   };
 
   const clearSyncedAnalyses = () => {

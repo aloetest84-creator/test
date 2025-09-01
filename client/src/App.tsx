@@ -21,6 +21,7 @@ import NotFound from "@/pages/not-found";
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
   const [isModelLoaded, setIsModelLoaded] = useState(false);
+  const [modelError, setModelError] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -31,7 +32,14 @@ function Router() {
   }
 
   if (isAuthenticated && !isModelLoaded) {
-    return <ModelLoader onLoaded={() => setIsModelLoaded(true)} />;
+    return (
+      <ModelLoader 
+        onLoaded={() => {
+          setIsModelLoaded(true);
+          setModelError(null);
+        }} 
+      />
+    );
   }
 
   return (
@@ -58,6 +66,16 @@ function Router() {
 }
 
 function App() {
+  // Cleanup model on app unmount
+  React.useEffect(() => {
+    return () => {
+      // Cleanup TensorFlow.js resources
+      import('@/services/modelService').then(({ modelService }) => {
+        modelService.dispose();
+      });
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>

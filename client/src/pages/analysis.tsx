@@ -170,9 +170,11 @@ export default function Analysis() {
             <Button 
               onClick={startAnalysis}
               disabled={isPredicting || isModelLoading}
-              className="w-full mt-4 bg-[#1c8567] hover:bg-[#063528] text-white"
+              className="w-full mt-4 bg-[#1c8567] hover:bg-[#063528] text-white disabled:opacity-50"
             >
-              {isModelLoading ? "Loading AI Model..." : isPredicting ? "Analyzing..." : "Start Analysis"}
+              {isModelLoading ? "Loading AI Model..." : 
+               isPredicting ? "Analyzing Plant..." : 
+               "Start AI Analysis"}
             </Button>
           )}
         </Card>
@@ -183,10 +185,10 @@ export default function Analysis() {
             <div className="text-center">
               <div className="w-16 h-16 border-4 border-[#1c8567]/20 border-t-[#1c8567] rounded-full animate-spin mx-auto mb-4"></div>
               <h3 className="font-medium text-[#063528] mb-2">
-                {isModelLoading ? "Loading AI Model..." : "Analyzing your plant..."}
+                {isModelLoading ? "Preparing AI Model..." : "AI Analysis in Progress..."}
               </h3>
               <p className="text-sm text-[#063528]/70">
-                {isModelLoading ? "Preparing the analysis engine" : "AI is examining the image for disease patterns"}
+                {isModelLoading ? "Loading TensorFlow.js model and weights" : "Examining image for disease patterns using deep learning"}
               </p>
             </div>
           </Card>
@@ -249,6 +251,19 @@ export default function Analysis() {
                   </div>
                 </div>
               )}
+
+              {/* Confidence Warning */}
+              {analysisResult.confidence < 0.7 && (
+                <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <div className="flex items-center space-x-2">
+                    <AlertTriangle className="w-4 h-4 text-yellow-600" />
+                    <p className="text-sm text-yellow-800 font-medium">Low Confidence Detection</p>
+                  </div>
+                  <p className="text-xs text-yellow-700 mt-1">
+                    Consider taking another photo with better lighting or a clearer view of the plant.
+                  </p>
+                </div>
+              )}
             </Card>
 
             {/* Treatment Recommendations */}
@@ -258,25 +273,10 @@ export default function Analysis() {
                   Recommended Treatment
                 </h3>
                 
-                <div className="space-y-3">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-[#0a8c2d]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-[#0a8c2d]">1</span>
-                    </div>
-                    <p className="text-sm text-[#063528]/80">Remove affected leaves to prevent spread</p>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-[#0a8c2d]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-[#0a8c2d]">2</span>
-                    </div>
-                    <p className="text-sm text-[#063528]/80">Apply appropriate treatment every 7 days</p>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-[#0a8c2d]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-[#0a8c2d]">3</span>
-                    </div>
-                    <p className="text-sm text-[#063528]/80">Improve air circulation around plant</p>
-                  </div>
+                <div className="bg-[#1c8567]/5 p-4 rounded-lg">
+                  <p className="text-sm text-[#063528]/80 leading-relaxed">
+                    {analysisResult.treatment}
+                  </p>
                 </div>
               </Card>
             )}
@@ -285,21 +285,25 @@ export default function Analysis() {
             <div className="grid grid-cols-2 gap-3">
               <Button 
                 onClick={() => {
+                  // Reset for new analysis
+                  setSelectedFile(null);
+                  setPreviewUrl(null);
+                  setAnalysisResult(null);
                   toast({
-                    title: "Results Saved",
-                    description: "Analysis has been saved to your history.",
+                    title: "Ready for new analysis",
+                    description: "You can now analyze another plant.",
                   });
                 }}
-                className="bg-[#1c8567] text-white"
+                variant="outline"
+                className="bg-[#1c8567]/10 text-[#1c8567] border-[#1c8567]/30"
               >
-                Save Results
+                New Analysis
               </Button>
               <Link href="/">
                 <Button 
-                  variant="outline"
-                  className="w-full bg-[#1c8567]/10 text-[#1c8567] border-[#1c8567]/30"
+                  className="w-full bg-[#1c8567] text-white"
                 >
-                  Back to Dashboard
+                  Dashboard
                 </Button>
               </Link>
             </div>

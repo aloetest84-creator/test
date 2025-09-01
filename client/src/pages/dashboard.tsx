@@ -10,6 +10,7 @@ import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { useAuth } from "@/hooks/useAuth";
 import type { PlantAnalysis } from "@shared/schema";
 import Chatbot from "@/components/Chatbot";
+import { ModelStatus } from "@/components/ModelStatus";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -85,6 +86,11 @@ export default function Dashboard() {
         <h2 className="[font-family:'Roboto',Helvetica] font-medium text-[#063528] text-lg mb-4">
           Quick Actions
         </h2>
+
+        {/* Model Status */}
+        <div className="mb-4">
+          <ModelStatus />
+        </div>
 
         {/* Analyze Plant Card */}
         <Card className="rounded-xl border-[0.5px] border-[#1c85672e] shadow-sm mb-4">

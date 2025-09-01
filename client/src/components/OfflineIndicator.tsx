@@ -21,10 +21,10 @@ export function OfflineIndicator() {
 
   const handleSync = async () => {
     try {
-      await syncOfflineAnalyses();
+      const syncedCount = await syncOfflineAnalyses();
       toast({
         title: "Sync complete",
-        description: `${unsyncedCount} analyses synced successfully`,
+        description: `${syncedCount} analyses synced successfully`,
       });
       setShowSyncPrompt(false);
     } catch (error) {
